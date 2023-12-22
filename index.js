@@ -36,6 +36,10 @@ io.on('connection', (socket) => {
   socket.on('join_room', (data) => {
     console.log('joining room ' + data.roomid);
     socket.join(data.roomid);
+    const room = io.sockets.adapter.rooms.get(data.roomid);
+    io.to(data.roomid).emit('online', {
+        size: room.size,
+    });
   });
 
   socket.on('data_send', (data) => {
