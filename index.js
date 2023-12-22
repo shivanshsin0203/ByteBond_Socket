@@ -1,11 +1,12 @@
-// server.js
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
-
+const mongoose = require('mongoose');
+const dotenv=require('dotenv');
+dotenv.config();
+const mongoUrl=process.env.mongoUrl;
 const app = express();
 const httpServer = http.createServer(app);
-
 const io = new Server(httpServer, {
   cors: {
     origin: ['http://localhost:3000'],
@@ -13,6 +14,21 @@ const io = new Server(httpServer, {
     credentials: true,
   },
 });
+
+mongoose.connect(mongoUrl);
+const messageSchema = new mongoose.Schema(
+    {
+      roomid: String,
+      sender: String,
+      message: String,
+    },
+    {
+      timestamps: true,
+    }
+  );
+  
+  const Message = mongoose.model('Message', messageSchema);
+  
 
 io.on('connection', (socket) => {
   console.log('a user connected ' + socket.id);
@@ -25,6 +41,8 @@ io.on('connection', (socket) => {
   socket.on('data_send', (data) => {
     console.log(data);
     io.to(data.roomid).emit('data_receive', data);
+    const newMessage = new Message(data);
+    newMessage.save();
   });
 });
 
