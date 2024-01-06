@@ -2,14 +2,12 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-dotenv.config();
-const mongoUrl = process.env.mongoUrl;
+const mongoUrl = "mongodb+srv://test:boond@cluster0.4y4rngu.mongodb.net/ByteBond";
 const app = express();
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: ['http://localhost:3000'],
+    origin: ['http://localhost:3000','https://bytebond.vercel.app'],
     allowedHeaders: ['my-custom-header'],
     credentials: true,
   },
